@@ -40,7 +40,7 @@ async function commonAfterEach() {
 }
 
 async function commonAfterAll() {
-  await db.end();
+  await db.end();//close connection b/t server and db
 }
 
 
