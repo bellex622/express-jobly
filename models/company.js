@@ -51,19 +51,38 @@ class Company {
   }
 
   /** Find all companies.
-   *
+   * possibly take a [filter]
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
+  static async findAll(filter) {
+    // const keys = Object.keys(filter);
+    //nameLike=>name minEmployees=> num_employees maxEmployees=> num_employees
+    // const filterFileds = {
+    //   nameLike:"name",
+    //   minEmloyees: "num_employees"
+    // }
+
     const companiesRes = await db.query(`
-        SELECT handle,
-               name,
-               description,
-               num_employees AS "numEmployees",
-               logo_url      AS "logoUrl"
-        FROM companies
-        ORDER BY name`);
+    SELECT handle,
+           name,
+           description,
+           num_employees AS "numEmployees",
+           logo_url      AS "logoUrl"
+    FROM companies
+    WHERE ${keys[0]} ILIKE $1
+    ORDER BY name`,[`%${values[0]}%`]);
+
+
+
+    // const companiesRes = await db.query(`
+    //     SELECT handle,
+    //            name,
+    //            description,
+    //            num_employees AS "numEmployees",
+    //            logo_url      AS "logoUrl"
+    //     FROM companies
+    //     ORDER BY name`);
     return companiesRes.rows;
   }
 

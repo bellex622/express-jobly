@@ -85,6 +85,21 @@ describe("findAll", function () {
       },
     ]);
   });
+// test("works: with filter", async function(){
+//   let companies = await Company.findAll();
+
+
+
+
+
+
+
+
+
+
+
+// })
+
 });
 
 /************************************** get */
