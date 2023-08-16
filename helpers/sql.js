@@ -3,17 +3,18 @@
 const { BadRequestError } = require("../expressError");
 
 // THIS NEEDS SOME GREAT DOCUMENTATION.
-/** take an object "dataToUpdate" and an object "jsToSql" where the values
- * in the object represent columns in the table,
+/** Takes two objects "dataToUpdate" and "jsToSql" where the values
+ * in jsToSql represent columns in the table.
  *
- * dataToUpdate can include { firstName, lastName, password, email, isAdmin }
- * jsToSql ex:{
+ * dataToUpdate ex: { firstName, lastName, password, email, isAdmin }
+ *
+ * jsToSql ex: {
  *        firstName: "first_name",
           lastName: "last_name",
           isAdmin: "is_admin",
  * }
  *
- * return an object => {
+ * Returns an object => {
  * setCols: '"first_name"=$1, "age"=$2'
  * values: ['Aliya', 32]
  * }
