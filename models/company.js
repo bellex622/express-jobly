@@ -71,20 +71,21 @@ class Company {
       sqlQuery = `WHERE num_employees <= $1`
       data.push(maxEmployees);
     }
-    if (nameLike, minEmployees){
+    if (nameLike && minEmployees){
       sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2`
     }
-    if (nameLike, maxEmployees){
+    if (nameLike && maxEmployees){
       sqlQuery = `WHERE name ILIKE $1 AND num_employees <= $2`
 
     }
-    if (minEmployees, maxEmployees){
+    if (minEmployees && maxEmployees){
       sqlQuery = `WHERE num_employees >= $1 AND num_employees <= $2`
     }
-    if (nameLike, minEmployees, maxEmployees){
+    if (nameLike && minEmployees && maxEmployees){
       sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`
     }
     console.log("our data: ", data);
+    console.log("our statement", sqlQuery);
 
 
     const companiesRes = await db.query(`
