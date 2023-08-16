@@ -55,34 +55,49 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(filter) {
-    // const keys = Object.keys(filter);
-    //nameLike=>name minEmployees=> num_employees maxEmployees=> num_employees
-    // const filterFileds = {
-    //   nameLike:"name",
-    //   minEmloyees: "num_employees"
-    // }
+  static async findAll({ nameLike, minEmployees, maxEmployees }) {
+    let sqlQuery = ``;
+    const data = [];
+
+    if (nameLike){
+      sqlQuery = `WHERE name ILIKE $1`
+      data.push(`%${nameLike}%`);
+    }
+    if (minEmployees){
+      sqlQuery = `WHERE num_employees >= $1`
+      data.push(minEmployees);
+    }
+    if (maxEmployees){
+      sqlQuery = `WHERE num_employees <= $1`
+      data.push(maxEmployees);
+    }
+    if (nameLike, minEmployees){
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2`
+    }
+    if (nameLike, maxEmployees){
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees <= $2`
+
+    }
+    if (minEmployees, maxEmployees){
+      sqlQuery = `WHERE num_employees >= $1 AND num_employees <= $2`
+    }
+    if (nameLike, minEmployees, maxEmployees){
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`
+    }
+    console.log("our data: ", data);
+
 
     const companiesRes = await db.query(`
-    SELECT handle,
-           name,
-           description,
-           num_employees AS "numEmployees",
-           logo_url      AS "logoUrl"
-    FROM companies
-    WHERE ${keys[0]} ILIKE $1
-    ORDER BY name`,[`%${values[0]}%`]);
+        SELECT handle,
+               name,
+               description,
+               num_employees AS "numEmployees",
+               logo_url      AS "logoUrl"
+        FROM companies
+        ${sqlQuery}
+        ORDER BY name`,
+        data);
 
-
-
-    // const companiesRes = await db.query(`
-    //     SELECT handle,
-    //            name,
-    //            description,
-    //            num_employees AS "numEmployees",
-    //            logo_url      AS "logoUrl"
-    //     FROM companies
-    //     ORDER BY name`);
     return companiesRes.rows;
   }
 
