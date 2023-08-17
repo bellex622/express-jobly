@@ -205,6 +205,22 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
+
+  static async getAdminByUsername(username) {
+    const adminRes = await db.query(`
+        SELECT username,
+               is_admin AS "isAdmin"
+        FROM users
+        WHERE username = $1 AND is_admin = 't'`, [username] ,
+    );
+
+    const admin = adminRes.rows[0];
+    if (!admin) throw new NotFoundError(`No admin: ${username}`);
+
+    return admin;
+  }
+
+
 }
 
 
