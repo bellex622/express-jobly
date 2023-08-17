@@ -79,16 +79,13 @@ describe("ensureIsAdmin", function () {
     ensureIsAdmin(req, res, next);
   });
 
-  // test("works: via header", function () {
-  //   const req = { headers: { authorization: `Bearer ${testJwt}` } };
-  //   const res = { locals: {} };
-  //   authenticateJWT(req, res, next);
-  //   expect(res.locals).toEqual({
-  //     user: {
-  //       iat: expect.any(Number),
-  //       username: "test",
-  //       isAdmin: false,
-  //     },
-  //   });
+  test("unauth if not admin", function () {
+    const req = {};
+    const res = { locals: { user: { username: "testAdmin", isAdmin: false } } };
+    expect(() => ensureIsAdmin(req, res, next))
+      .toThrow(UnauthorizedError);
+  });
+
+
 
 });
