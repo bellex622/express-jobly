@@ -53,8 +53,10 @@ class Company {
   /** Find all companies.
    * accepts optional object that contains filter fields that are used to build
    * a query statement.
-   * ex:filters => {nameLike, minEmployees, maxEmployees}
-   * if no filter is provided, default parameter is set to be undefined.
+   *
+   * ex: filters => {nameLike, minEmployees, maxEmployees}
+   *
+   * if no filter is provided, default parameter is set to undefined.
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
@@ -69,8 +71,13 @@ class Company {
        minEmployees = filters.minEmployees;
        maxEmployees = filters.maxEmployees;
     }
+
+    if (minEmployees > maxEmployees) {
+      throw new BadRequestError("Min cannot be greater than Max");
+    };
+
+
 //TODO: dynamically determine $1....
-//TODO: check if min > max
     if (nameLike) {
       sqlQuery = `WHERE name ILIKE $1`;
       data.push(`%${nameLike}%`);

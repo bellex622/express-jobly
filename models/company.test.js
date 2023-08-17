@@ -91,7 +91,7 @@ describe("findAll", function () {
     minEmployees: 2,
     maxEmployees: 3
   };
-  //TODO: test when min > max
+
   //TODO: test not all filters
   test("works: with all filters", async function () {
     const companies = await Company.findAll(filters);
@@ -113,7 +113,15 @@ describe("findAll", function () {
     ]);
   });
 
+  let badFilters = {
+    minEmployees: 3,
+    maxEmployees: 2
+  };
 
+  test("throw bad request error if min > max", async function () {
+    expect(() => Company.findAll(badFilters).toThrow(`Min cannot be greater
+    than Max`));
+  });
 
 });
 

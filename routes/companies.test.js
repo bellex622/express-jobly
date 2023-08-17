@@ -96,10 +96,17 @@ describe("GET /companies", function () {
     });
   });
 
-//TODO: request.(app).get(/companies).query(obj)
-  test("throw 400 for invalid query", async function () {
-    const resp = await request(app).get(`/companies?nameLike=b&minEmployees=200
-    &maxEmployees=300&description=fdss`);
+  test("throw 400 for invalid query, extra data", async function () {
+    const q = {
+      nameLike: "c",
+      minEmployees: 2,
+      maxEmployees: 3,
+      description: "fdss"
+    }
+    // const resp = await request(app).get(`/companies?nameLike=b&minEmployees=200
+    // &maxEmployees=300&description=fdss`);
+    
+    const resp = await request(app).get("/companies").query(q)
     expect(resp.statusCode).toEqual(400);
   });
 
