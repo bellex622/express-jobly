@@ -38,12 +38,12 @@ class Company {
                     description,
                     num_employees AS "numEmployees",
                     logo_url AS "logoUrl"`, [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      handle,
+      name,
+      description,
+      numEmployees,
+      logoUrl,
+    ],
     );
     const company = result.rows[0];
 
@@ -51,38 +51,49 @@ class Company {
   }
 
   /** Find all companies.
-   * possibly take a [filter]
+   * accepts optional object that contains filter fields that are used to build
+   * a query statement.
+   * ex:filters => {nameLike, minEmployees, maxEmployees}
+   * if no filter is provided, default parameter is set to be undefined.
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll({ nameLike, minEmployees, maxEmployees }) {
+  static async findAll(filters = undefined) {
     let sqlQuery = ``;
     const data = [];
-
-    if (nameLike){
-      sqlQuery = `WHERE name ILIKE $1`
+    let nameLike;
+    let minEmployees;
+    let maxEmployees;
+    if (filters !== undefined) {
+       nameLike = filters.nameLike;
+       minEmployees = filters.minEmployees;
+       maxEmployees = filters.maxEmployees;
+    }
+//TODO: dynamically determine $1....
+//TODO: check if min > max
+    if (nameLike) {
+      sqlQuery = `WHERE name ILIKE $1`;
       data.push(`%${nameLike}%`);
     }
-    if (minEmployees){
-      sqlQuery = `WHERE num_employees >= $1`
+    if (minEmployees) {
+      sqlQuery = `WHERE num_employees >= $1`;
       data.push(minEmployees);
     }
-    if (maxEmployees){
-      sqlQuery = `WHERE num_employees <= $1`
+    if (maxEmployees) {
+      sqlQuery = `WHERE num_employees <= $1`;
       data.push(maxEmployees);
     }
-    if (nameLike && minEmployees){
-      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2`
+    if (nameLike && minEmployees) {
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2`;
     }
-    if (nameLike && maxEmployees){
-      sqlQuery = `WHERE name ILIKE $1 AND num_employees <= $2`
-
+    if (nameLike && maxEmployees) {
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees <= $2`;
     }
-    if (minEmployees && maxEmployees){
-      sqlQuery = `WHERE num_employees >= $1 AND num_employees <= $2`
+    if (minEmployees && maxEmployees) {
+      sqlQuery = `WHERE num_employees >= $1 AND num_employees <= $2`;
     }
-    if (nameLike && minEmployees && maxEmployees){
-      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`
+    if (nameLike && minEmployees && maxEmployees) {
+      sqlQuery = `WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`;
     }
     console.log("our data: ", data);
     console.log("our statement", sqlQuery);
@@ -97,7 +108,7 @@ class Company {
         FROM companies
         ${sqlQuery}
         ORDER BY name`,
-        data);
+      data);
 
     return companiesRes.rows;
   }
@@ -141,11 +152,11 @@ class Company {
 
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+      data,
+      {
+        numEmployees: "num_employees",
+        logoUrl: "logo_url",
+      });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `

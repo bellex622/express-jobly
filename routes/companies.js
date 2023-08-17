@@ -3,6 +3,7 @@
 /** Routes for companies. */
 
 const jsonschema = require("jsonschema");
+const companyFilterSchema = require("../schemas/companyFilter.json");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
@@ -52,7 +53,17 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
 
-  // const { nameLike, minEmployees, maxEmployees } = req.query
+  const validator = jsonschema.validate(
+    req.query,
+    companyFilterSchema,
+    { required: false }
+  );
+  if (!validator.valid) {
+    const errs = validator.errors.map(e => e.stack);
+    throw new BadRequestError(errs);
+  }
+
+  // const { nameLike, minEmployees, maxEmployees, description } = req.query
 
   const companies = await Company.findAll(req.query);
   return res.json({ companies });

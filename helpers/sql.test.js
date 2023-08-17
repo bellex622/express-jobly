@@ -12,6 +12,7 @@ describe("sqlForPartialUpdate", function() {
     isAdmin: "f"
   }
 
+//TODO: validate variations of fileds passed to the obj
   const jsToSql = {
     firstName: "first_name",
     lastName: "last_name",
