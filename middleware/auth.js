@@ -49,9 +49,6 @@ function ensureLoggedIn(req, res, next) {
  */
 
 function ensureIsAdmin(req, res, next) {
-  console.log("res.locals:", res.locals);
-  console.log("res.locals.user:", res.locals?.user);
-
   if (res.locals.user?.isAdmin === true) return next();
   console.log(res.locals);
 

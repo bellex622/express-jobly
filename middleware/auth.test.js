@@ -75,7 +75,7 @@ describe("ensureLoggedIn", function () {
 describe("ensureIsAdmin", function () {
   test("works", function () {
     const req = {};
-    const res = { locals: { username: "testAdmin", isAdmin: true } };
+    const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
     ensureIsAdmin(req, res, next);
   });
 
