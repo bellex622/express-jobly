@@ -25,6 +25,7 @@ const router = express.Router();
  *  {user: { username, firstName, lastName, email, isAdmin }, token }
  *
  * Authorization required: login, admin
+ * otherwise, raise UnauthorizedError
  **/
 
 router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
@@ -49,6 +50,7 @@ router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) 
  * Returns list of all users.
  *
  * Authorization required: login, admin
+ * otherwise, raise UnauthorizedError
  **/
 
 router.get("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
@@ -62,6 +64,7 @@ router.get("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
  * Returns { username, firstName, lastName, isAdmin }
  *
  * Authorization required: login, admin/owner of account
+ * otherwise, raise UnauthorizedError
  **/
 
 router.get("/:username", ensureLoggedIn, async function (req, res, next) {
@@ -69,12 +72,13 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   const currentUser = res.locals.user;
   console.log("current user is", currentUser);
 
+  // if this is not the right person, throw error here
+  // kick them out ASAP
   if (currentUser.isAdmin === true || currentUser.username === user.username) {
     return res.json({ user });
   }
 
   throw new UnauthorizedError();
-
 });
 
 
@@ -86,9 +90,13 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
  * Returns { username, firstName, lastName, email, isAdmin }
  *
  * Authorization required: login, admin/owner of account
+ * otherwise, raise UnauthorizedError
  **/
 
 router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
+  // check user and boot them out immediatley
+  // good opportunity for middleware if we're doing the same thing in
+  // multiple routes => makes routes clearer
   const validator = jsonschema.validate(
     req.body,
     userUpdateSchema,
@@ -114,6 +122,7 @@ router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
 /** DELETE /[username]  =>  { deleted: username }
  *
  * Authorization required: login, admin/owner of account
+ * otherwise, raise UnauthorizedError
  **/
 
 router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
@@ -126,8 +135,6 @@ router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
   }
 
   throw new UnauthorizedError();
-
-
 
 });
 

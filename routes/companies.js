@@ -22,7 +22,8 @@ const router = new express.Router();
  *
  * Returns { handle, name, description, numEmployees, logoUrl }
  *
- * Authorization required: login, is_admin = "t"
+ * Authorization required: login, admin
+ * otherwise, raise UnauthorizedError
  */
 
 router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
@@ -90,7 +91,8 @@ router.get("/:handle", async function (req, res, next) {
  *
  * Returns { handle, name, description, numEmployees, logo_url }
  *
- * Authorization required: login, is_admin = "t"
+ * Authorization required: login, admin
+ * otherwise, raise UnauthorizedError
  */
 
 router.patch("/:handle", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
@@ -110,12 +112,17 @@ router.patch("/:handle", ensureLoggedIn, ensureIsAdmin, async function (req, res
 
 /** DELETE /[handle]  =>  { deleted: handle }
  *
- * Authorization required: login, is_admin = "t"
+ * Authorization required: login, admin
+ * otherwise, raise UnauthorizedError
  */
 
-router.delete("/:handle", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
-  await Company.remove(req.params.handle);
-  return res.json({ deleted: req.params.handle });
+router.delete(
+  "/:handle",
+  ensureLoggedIn,
+  ensureIsAdmin,
+  async function (req, res, next) {
+    await Company.remove(req.params.handle);
+    return res.json({ deleted: req.params.handle });
 });
 
 

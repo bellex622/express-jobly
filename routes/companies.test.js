@@ -11,7 +11,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  u4Token
+  u4Token,
+  errorObj
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -28,13 +29,6 @@ describe("POST /companies", function () {
     logoUrl: "http://new.img",
     description: "DescNew",
     numEmployees: 10,
-  };
-
-  const errorObj = {
-    "error": {
-      "message": "Unauthorized",
-      "status": 401
-    }
   };
 
   test("ok for admin users", async function () {
@@ -56,8 +50,6 @@ describe("POST /companies", function () {
     expect(resp.statusCode).toEqual(401);
     expect(resp.body).toEqual(errorObj);
   });
-
-
 
   test("bad request with missing data", async function () {
     const resp = await request(app)
@@ -81,6 +73,11 @@ describe("POST /companies", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+// TODO: explicity test for non-admin trying to make changes
+// ensure not authroized users are not getting ANY information =>
+// get kicked out at the front door
+// *** make above changes throughout
 
 /************************************** GET /companies */
 
@@ -195,13 +192,6 @@ describe("GET /companies/:handle", function () {
 /************************************** PATCH /companies/:handle */
 
 describe("PATCH /companies/:handle", function () {
-  const errorObj = {
-    "error": {
-      "message": "Unauthorized",
-      "status": 401
-    }
-  };
-
   test("works for admin users", async function () {
     const resp = await request(app)
       .patch(`/companies/c1`)
@@ -276,12 +266,6 @@ describe("PATCH /companies/:handle", function () {
 /************************************** DELETE /companies/:handle */
 
 describe("DELETE /companies/:handle", function () {
-  const errorObj = {
-    "error": {
-      "message": "Unauthorized",
-      "status": 401
-    }
-  };
   test("works for admin users", async function () {
     const resp = await request(app)
       .delete(`/companies/c1`)
@@ -296,7 +280,7 @@ describe("DELETE /companies/:handle", function () {
     expect(resp.body).toEqual(errorObj);
   });
 
-  test("denied for admin users", async function () {
+  test("denied for non-admin users", async function () {
     const resp = await request(app)
       .delete(`/companies/c1`)
       .set("authorization", `Bearer ${u1Token}`);
