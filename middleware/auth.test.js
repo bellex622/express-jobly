@@ -10,9 +10,9 @@ const {
 
 
 const { SECRET_KEY } = require("../config");
-const testAdmin = jwt.sign({ username: "testAdmin", isAdmin: true }, SECRET_KEY);
 const testJwt = jwt.sign({ username: "test", isAdmin: false }, SECRET_KEY);
 const badJwt = jwt.sign({ username: "test", isAdmin: false }, "wrong");
+const adminJwt = jwt.sign({ username: "testAdmin", isAdmin: true }, SECRET_KEY);
 
 function next(err) {
   if (err) throw new Error("Got error from middleware");
@@ -70,22 +70,25 @@ describe("ensureLoggedIn", function () {
       .toThrow(UnauthorizedError);
   });
 
+});
 
-  describe("ensureIsAdmin", function () {
-    test("works", function () {
-      console.log("WAHOOOO WE PASSED");
-      const req = {};
-      const res = { locals: { username: "testAdmin", isAdmin: true } };
-      ensureIsAdmin(req, res, next);
-    });
-
-    // test("unauth if not admin", function () {
-    //   const req = {};
-    //   const res = { locals: { user: { username: "test" } } };
-    //   expect(() => ensureIsAdmin(req, res, next))
-    //     .toThrow(UnauthorizedError);
-    // });
-
-
+describe("ensureIsAdmin", function () {
+  test("works", function () {
+    const req = {};
+    const res = { locals: { username: "testAdmin", isAdmin: true } };
+    ensureIsAdmin(req, res, next);
   });
+
+  // test("works: via header", function () {
+  //   const req = { headers: { authorization: `Bearer ${testJwt}` } };
+  //   const res = { locals: {} };
+  //   authenticateJWT(req, res, next);
+  //   expect(res.locals).toEqual({
+  //     user: {
+  //       iat: expect.any(Number),
+  //       username: "test",
+  //       isAdmin: false,
+  //     },
+  //   });
+
 });

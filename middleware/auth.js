@@ -37,13 +37,11 @@ function authenticateJWT(req, res, next) {
  */
 
 function ensureLoggedIn(req, res, next) {
-  // console.log("user: --------------->", res.locals);
   if (res.locals.user?.username) return next();
-  console.log("res.locals is =====>", res.locals);
   throw new UnauthorizedError();
 }
 
-/** Middleware to use when action requires is_admin access.
+/** Middleware to use when action requires isAdmin access.
  *
  * actions include: creating, updating, and deleting companies.
  *
@@ -51,8 +49,11 @@ function ensureLoggedIn(req, res, next) {
  */
 
 function ensureIsAdmin(req, res, next) {
-  if (res.locals.user === undefined) throw new UnauthorizedError();
+  console.log("res.locals:", res.locals);
+  console.log("res.locals.user:", res.locals?.user);
+
   if (res.locals.user?.isAdmin === true) return next();
+  console.log(res.locals);
 
   throw new UnauthorizedError();
 }
