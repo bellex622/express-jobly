@@ -41,11 +41,11 @@ function ensureLoggedIn(req, res, next) {
   throw new UnauthorizedError();
 }
 
-/** Middleware to use when action requires isAdmin access.
+/** Middleware to use when request requires admin access.
  *
- * actions include: creating, updating, and deleting companies.
+ * requests include: creating, updating, and deleting users/companies.
  *
- * If not, raises Unauthorized.
+ * If not, raises UnauthorizedError.
  */
 
 function ensureIsAdmin(req, res, next) {
