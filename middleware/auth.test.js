@@ -75,7 +75,7 @@ describe("ensureLoggedIn", function () {
     test("works", function () {
       console.log("WAHOOOO WE PASSED");
       const req = {};
-      const res = { locals: { user: { username: "testAdmin" } } };
+      const res = { locals: { username: "testAdmin", isAdmin: true } };
       ensureIsAdmin(req, res, next);
     });
 
