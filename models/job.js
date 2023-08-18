@@ -19,6 +19,7 @@ class Job {
      * Returns { id, title, salary, equity, company_handle }
      *
      * */
+
   static async create({ title, salary, equity, companyHandle }) {
     const result = await db.query(`
       INSERT INTO jobs (title, salary, equity, company_handle)
@@ -57,7 +58,7 @@ class Job {
     if (filters !== undefined) {
       title = filters.title;
       minSalary = filters.minSalary;
-      hasEquity = filters.hasEquity;
+      hasEquity = filters.hasEquity?.toLowerCase();
     }
 
     if (title) {
@@ -68,20 +69,20 @@ class Job {
       sqlQuery = `WHERE salary >= $1`;
       data.push(minSalary);
     }
-    if (hasEquity.toLowerCase() === "true") {
+    if (hasEquity=== "true") {
       sqlQuery = `WHERE equity > $1`;
       data.push(0);
     }
     if (title && minSalary) {
       sqlQuery = `WHERE title ILIKE $1 AND salary >= $2`;
     }
-    if (title && hasEquity.toLowerCase() === "true") {
+    if (title && hasEquity === "true") {
       sqlQuery = `WHERE title ILIKE $1 AND salary <= $2`;
     }
-    if (minSalary && hasEquity.toLowerCase() === "true") {
+    if (minSalary && hasEquity === "true") {
       sqlQuery = `WHERE salary >= $1 AND equity > $2`;
     }
-    if (title && minSalary && hasEquity.toLowerCase() === "true") {
+    if (title && minSalary && hasEquity === "true") {
       sqlQuery = `WHERE title ILIKE $1
                   AND salary >= $2
                   AND equity > $3`;
@@ -89,14 +90,14 @@ class Job {
 
 
     const jobsRes = await db.query(`
-        SELECT id,
-               title,
-               salary,
-               equity,
-               company_handle as "companyHandle"
-        FROM jobs
-        ${sqlQuery}
-        ORDER BY title, salary`,
+    SELECT id,
+        title,
+        salary,
+        equity,
+        company_handle as "companyHandle"
+    FROM jobs
+    ${sqlQuery}
+    ORDER BY title, salary`,
       data);
 
     return jobsRes.rows;
@@ -114,7 +115,7 @@ class Job {
         SELECT id,
                title,
                salary,
-               euqity,
+               equity,
                company_handle AS "companyHandle"
         FROM jobs
         WHERE id = $1`, [id]);
@@ -123,7 +124,7 @@ class Job {
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
 
-    return company;
+    return job;
   }
 
   /** Update job data with `data`.

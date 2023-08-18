@@ -98,7 +98,7 @@ router.get("/:id", async function (req, res, next) {
  * otherwise, raise UnauthorizedError
  */
 
-router.patch("/:handle", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
+router.patch("/:id", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     jobUpdateSchema,

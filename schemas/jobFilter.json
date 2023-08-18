@@ -13,7 +13,14 @@
       },
       "hasEquity": {
         "type": "string",
-        "enum": ["true", "false", "True", "False"]
+        "enum": [
+        "true",
+        "false",
+        "True",
+        "False",
+        "TRUE",
+        "FALSE"
+      ]
       }
     },
     "additionalProperties": false
