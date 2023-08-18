@@ -15,7 +15,7 @@
         "minimum": 0,
         "maximum": 1.0
       },
-      "handleCompany": {
+      "companyHandle": {
         "type": "string",
         "minLength": 1,
         "maxLength": 25
@@ -26,6 +26,6 @@
       "title",
       "salary",
       "equity",
-      "handleCompany"
+      "companyHandle"
     ]
   }

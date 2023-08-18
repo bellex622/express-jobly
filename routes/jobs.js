@@ -9,6 +9,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn, ensureIsAdmin } = require("../middleware/auth");
 const Job = require("../models/job");
+const Company = require("../models/company");
 
 const jobNewSchema = require("../schemas/jobNew.json");
 const jobUpdateSchema = require("../schemas/jobUpdate.json");
@@ -36,7 +37,10 @@ router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) 
     throw new BadRequestError(errs);
   }
 
-  const job = await job.create(req.body);
+  const { companyHandle } = req.body;
+  await Company.get(companyHandle);//check if company exists
+
+  const job = await Job.create(req.body);
   return res.status(201).json({ job });
 });
 
@@ -65,7 +69,7 @@ router.get("/", async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
-  const jobs = await Company.findAll(req.query);
+  const jobs = await Job.findAll(req.query);
   return res.json({ jobs });
 });
 
@@ -122,7 +126,7 @@ router.delete(
   async function (req, res, next) {
     await Job.remove(req.params.id);
     return res.json({ deleted: req.params.id });
-});
+  });
 
 
 module.exports = router;

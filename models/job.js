@@ -19,9 +19,9 @@ class Job {
      * Returns { id, title, salary, equity, company_handle }
      *
      * */
-  static async create({ title, salary, equity, company_handle }) {
+  static async create({ title, salary, equity, companyHandle }) {
     const result = await db.query(`
-      INSERT INTO companies (title, salary, equity, company_handle)
+      INSERT INTO jobs (title, salary, equity, company_handle)
       VALUES ($1, $2, $3, $4)
       RETURNING
           id,
@@ -29,7 +29,7 @@ class Job {
           salary,
           equity,
           company_handle AS "companyHandle"`,
-      [title, salary, equity,company_handle,]
+      [title, salary, equity, companyHandle,]
     );
 
     const job = result.rows[0];
@@ -65,26 +65,26 @@ class Job {
       data.push(`%${title}%`);
     }
     if (minSalary) {
-      sqlQuery = `WHERE minSalary >= $1`;
+      sqlQuery = `WHERE salary >= $1`;
       data.push(minSalary);
     }
-    if (hasEquity) {
-      sqlQuery = `WHERE hasEquity = $1`;
-      data.push(hasEquity);
+    if (hasEquity.toLowerCase() === "true") {
+      sqlQuery = `WHERE equity > $1`;
+      data.push(0);
     }
     if (title && minSalary) {
-      sqlQuery = `WHERE title ILIKE $1 AND minSalary >= $2`;
+      sqlQuery = `WHERE title ILIKE $1 AND salary >= $2`;
     }
-    if (title && hasEquity) {
-      sqlQuery = `WHERE title ILIKE $1 AND num_employees <= $2`;
+    if (title && hasEquity.toLowerCase() === "true") {
+      sqlQuery = `WHERE title ILIKE $1 AND salary <= $2`;
     }
-    if (minSalary && hasEquity) {
-      sqlQuery = `WHERE num_employees >= $1 AND hasEquity = $2`;
+    if (minSalary && hasEquity.toLowerCase() === "true") {
+      sqlQuery = `WHERE salary >= $1 AND equity > $2`;
     }
-    if (title && minSalary && hasEquity) {
+    if (title && minSalary && hasEquity.toLowerCase() === "true") {
       sqlQuery = `WHERE title ILIKE $1
-                  AND minSalary >= $2
-                  AND hasEquity <= $3`;
+                  AND salary >= $2
+                  AND equity > $3`;
     }
 
 
@@ -96,10 +96,10 @@ class Job {
                company_handle as "companyHandle"
         FROM jobs
         ${sqlQuery}
-        ORDER BY title`,
+        ORDER BY title, salary`,
       data);
 
-    return companiesRes.rows;
+    return jobsRes.rows;
   }
 
   /** Given a job id, return data about job.
@@ -140,7 +140,7 @@ class Job {
 
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
-      data,{});
+      data, {});
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `
@@ -161,21 +161,21 @@ class Job {
     return job;
   }
 
-/** Delete given job from database; returns undefined.
-   *
-   * Throws NotFoundError if job not found.
-   **/
+  /** Delete given job from database; returns undefined.
+     *
+     * Throws NotFoundError if job not found.
+     **/
 
-static async remove(id) {
-  const result = await db.query(`
+  static async remove(id) {
+    const result = await db.query(`
       DELETE
       FROM jobs
       WHERE id = $1
       RETURNING id`, [id]);
-  const job = result.rows[0];
+    const job = result.rows[0];
 
-  if (!job) throw new NotFoundError(`No job: ${id}`);
-}
+    if (!job) throw new NotFoundError(`No job: ${id}`);
+  }
 }
 
 module.exports = Job;

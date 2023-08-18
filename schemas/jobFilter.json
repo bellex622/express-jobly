@@ -8,11 +8,12 @@
         "minLength": 1,
         "maxLength": 30
       },
-      "salary": {
-        "type": "number"
+      "minSalary": {
+        "type": "string"
       },
       "hasEquity": {
-        "type": "string"
+        "type": "string",
+        "enum": ["true", "false", "True", "False"]
       }
     },
     "additionalProperties": false
