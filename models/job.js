@@ -21,32 +21,25 @@ class Job {
      * */
   static async create({ title, salary, equity, company_handle }) {
     const result = await db.query(`
-                INSERT INTO companies (title,
-                                       salary,
-                                       equity,
-                                       company_handle)
-                VALUES ($1, $2, $3, $4)
-                RETURNING
-                    id,
-                    title,
-                    salary,
-                    equity,
-                    company_handle AS "companyHandle"`,
-      [
-        title,
-        salary,
-        equity,
-        company_handle,
-      ],
+      INSERT INTO companies (title, salary, equity, company_handle)
+      VALUES ($1, $2, $3, $4)
+      RETURNING
+          id,
+          title,
+          salary,
+          equity,
+          company_handle AS "companyHandle"`,
+      [title, salary, equity,company_handle,]
     );
+
     const job = result.rows[0];
 
     return job;
   }
 
   /** Find all jobs.
-   * accepts optional object that contains filter fields that are used to build
-   * a query statement.
+   * accepts optional object that contains filter fields that are
+   * used to build a query statement.
    *
    * ex: filters => {title, minSalary, hasEquity}
    *
@@ -57,16 +50,56 @@ class Job {
   static async findAll(filters = undefined) {
     let sqlQuery = ``;
     const data = [];
-    let nameLike;
-    let minEmployees;
-    let maxEmployees;
+
+    let title;
+    let minSalary;
+    let hasEquity;
     if (filters !== undefined) {
-      nameLike = filters.nameLike;
-      minEmployees = filters.minEmployees;
-      maxEmployees = filters.maxEmployees;
+      title = filters.title;
+      minSalary = filters.minSalary;
+      hasEquity = filters.hasEquity;
+    }
+
+    if (title) {
+      sqlQuery = `WHERE title ILIKE $1`;
+      data.push(`%${title}%`);
+    }
+    if (minSalary) {
+      sqlQuery = `WHERE minSalary >= $1`;
+      data.push(minSalary);
+    }
+    if (hasEquity) {
+      sqlQuery = `WHERE hasEquity = $1`;
+      data.push(hasEquity);
+    }
+    if (title && minSalary) {
+      sqlQuery = `WHERE title ILIKE $1 AND minSalary >= $2`;
+    }
+    if (title && hasEquity) {
+      sqlQuery = `WHERE title ILIKE $1 AND num_employees <= $2`;
+    }
+    if (minSalary && hasEquity) {
+      sqlQuery = `WHERE num_employees >= $1 AND hasEquity = $2`;
+    }
+    if (title && minSalary && hasEquity) {
+      sqlQuery = `WHERE title ILIKE $1
+                  AND minSalary >= $2
+                  AND hasEquity <= $3`;
     }
 
 
+    const jobsRes = await db.query(`
+        SELECT id,
+               title,
+               salary,
+               equity,
+               company_handle as "companyHandle"
+        FROM jobs
+        ${sqlQuery}
+        ORDER BY title`,
+      data);
+
+    return companiesRes.rows;
   }
 
   /** Given a job id, return data about job.

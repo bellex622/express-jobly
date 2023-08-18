@@ -17,9 +17,9 @@ const router = new express.Router();
 
 /** POST / { job } =>  { job }
  *
- * company should be { title, salary, equity, companyHandle }
+ * job should be { title, salary, equity, companyHandle }
  *
- * Returns { id, title, salary, equity, companyHandle }
+ * returns { id, title, salary, equity, companyHandle }
  *
  * Authorization required: login, admin
  * otherwise, raise UnauthorizedError
