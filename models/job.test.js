@@ -37,7 +37,7 @@ describe("create", function () {
     title: "test job",
     equity: "0.9",
     companyHandle: "c1"
-  }
+  };
 
 
 
@@ -61,88 +61,90 @@ describe("create", function () {
   });
 
 
-})
+});
 
 
-  // test("bad request with dupe", async function () {
-  //   try {
-  //     await Company.create(newCompany);
-  //     await Company.create(newCompany);
-  //     throw new Error("fail test, you shouldn't get here");
-  //   } catch (err) {
-  //     expect(err instanceof BadRequestError).toBeTruthy();
-  //   }
-  // });
+//   test("bad request with dupe", async function () {
+//     try {
+//       await Company.create(newCompany);
+//       await Company.create(newCompany);
+//       throw new Error("fail test, you shouldn't get here");
+//     } catch (err) {
+//       expect(err instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
 // });
 
 /************************************** findAll */
 
-// describe("findAll", function () {
-//   test("works: no filter", async function () {
-//     let companies = await Company.findAll();
-//     expect(companies).toEqual([
-//       {
-//         handle: "c1",
-//         name: "C1",
-//         description: "Desc1",
-//         numEmployees: 1,
-//         logoUrl: "http://c1.img",
-//       },
-//       {
-//         handle: "c2",
-//         name: "C2",
-//         description: "Desc2",
-//         numEmployees: 2,
-//         logoUrl: "http://c2.img",
-//       },
-//       {
-//         handle: "c3",
-//         name: "C3",
-//         description: "Desc3",
-//         numEmployees: 3,
-//         logoUrl: "http://c3.img",
-//       },
-//     ]);
-//   });
+describe("findAll", function () {
+  test("works: no filter", async function () {
+    let jobs = await Job.findAll();
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "j1",
+        salary: 10000,
+        equity: "0.05",
+        companyHandle: "c1",
+      },
+      {
+        id: expect.any(Number),
+        title: "j2",
+        salary: 10000,
+        equity: "0.04",
+        companyHandle: "c2",
+      },
+      {
+        id: expect.any(Number),
+        title: "j3",
+        salary: 10000,
+        equity: "0",
+        companyHandle: "c3",
+      },
+    ]);
+  });
 
-//   let filters = {
-//     nameLike: "c",
-//     minEmployees: 2,
-//     maxEmployees: 3
-//   };
+  let filters = {
+    title: "j",
+    minSalary: 5000,
+    hasEquity: "true",
+  };
 
-//   //TODO: test not all filters
-//   test("works: with all filters", async function () {
-//     const companies = await Company.findAll(filters);
-//     expect(companies).toEqual([
-//       {
-//         handle: "c2",
-//         name: "C2",
-//         description: "Desc2",
-//         numEmployees: 2,
-//         logoUrl: "http://c2.img",
-//       },
-//       {
-//         handle: "c3",
-//         name: "C3",
-//         description: "Desc3",
-//         numEmployees: 3,
-//         logoUrl: "http://c3.img",
-//       }
-//     ]);
-//   });
+  //   //TODO: test not all filters
+  test("works: with all filters", async function () {
+    const jobs = await Job.findAll(filters);
+    console.log("filters are", filters)
+    console.log("jobs are", jobs)
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "j1",
+        salary: 10000,
+        equity: "0.05",
+        companyHandle: "c1",
+      },
+      {
+        id: expect.any(Number),
+        title: "j2",
+        salary: 10000,
+        equity: "0.04",
+        companyHandle: "c2",
+      }
+    ]);
+  });
 
-//   let badFilters = {
-//     minEmployees: 3,
-//     maxEmployees: 2
-//   };
+  //   let badFilters = {
+  //     minEmployees: 3,
+  //     maxEmployees: 2
+  //   };
 
-//   test("throw bad request error if min > max", async function () {
-//     expect(() => Company.findAll(badFilters).toThrow(`Min cannot be greater
-//     than Max`));
-//   });
+  //   test("throw bad request error if min > max", async function () {
+  //     expect(() => Company.findAll(badFilters).toThrow(`Min cannot be greater
+  //     than Max`));
+  //   });
 
-// });
+});
 
 // /************************************** get */
 

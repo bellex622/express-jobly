@@ -88,7 +88,7 @@ class Job {
                   AND equity > $3`;
     }
 
-
+console.log("sql query is", sqlQuery);
     const jobsRes = await db.query(`
     SELECT id,
         title,

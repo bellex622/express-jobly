@@ -36,7 +36,7 @@ router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) 
     const errs = validator.errors.map(e => e.stack);
     throw new BadRequestError(errs);
   }
-
+6
   const { companyHandle } = req.body;
   await Company.get(companyHandle);//check if company exists
 
