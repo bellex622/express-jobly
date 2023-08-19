@@ -8,6 +8,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJobId,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -111,11 +112,10 @@ describe("findAll", function () {
     hasEquity: "true",
   };
 
-  //   //TODO: test not all filters
   test("works: with all filters", async function () {
     const jobs = await Job.findAll(filters);
-    console.log("filters are", filters)
-    console.log("jobs are", jobs)
+    console.log("filters are", filters);
+    console.log("jobs are", jobs);
     expect(jobs).toEqual([
       {
         id: expect.any(Number),
@@ -134,41 +134,49 @@ describe("findAll", function () {
     ]);
   });
 
-  //   let badFilters = {
-  //     minEmployees: 3,
-  //     maxEmployees: 2
-  //   };
+  let partialFilters = {
+    title: "j1"
+  };
 
-  //   test("throw bad request error if min > max", async function () {
-  //     expect(() => Company.findAll(badFilters).toThrow(`Min cannot be greater
-  //     than Max`));
-  //   });
+  test("works: with partial filters", async function () {
+    const jobs = await Job.findAll(partialFilters);
+    console.log("jobs are", jobs);
+    expect(jobs).toEqual([
+      {
+        id: expect.any(Number),
+        title: "j1",
+        salary: 10000,
+        equity: "0.05",
+        companyHandle: "c1",
+      }
+    ]);
+  });
 
 });
 
 // /************************************** get */
 
-// describe("get", function () {
-//   test("works", async function () {
-//     let company = await Company.get("c1");
-//     expect(company).toEqual({
-//       handle: "c1",
-//       name: "C1",
-//       description: "Desc1",
-//       numEmployees: 1,
-//       logoUrl: "http://c1.img",
-//     });
-//   });
+describe("get", function () {
+  test("works", async function () {
+    let job = await Job.get(testJobId[0]);
+    expect(job).toEqual({
+      id: expect.any(Number),
+      title: "j1",
+      salary: 10000,
+      equity: "0.05",
+      companyHandle: "c1",
+    });
+  });
 
-//   test("not found if no such company", async function () {
-//     try {
-//       await Company.get("nope");
-//       throw new Error("fail test, you shouldn't get here");
-//     } catch (err) {
-//       expect(err instanceof NotFoundError).toBeTruthy();
-//     }
-//   });
-// });
+  // test("not found if no such job", async function () {
+  //   try {
+  //     await Job.get("nope");
+  //     throw new Error("fail test, you shouldn't get here");
+  //   } catch (err) {
+  //     expect(err instanceof NotFoundError).toBeTruthy();
+  //   }
+  // });
+});
 
 // /************************************** update */
 
